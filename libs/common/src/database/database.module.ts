@@ -1,11 +1,12 @@
 import { Logger, Module } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ModelDefinition, MongooseModule } from '@nestjs/mongoose';
-import { ConfigModule } from '../config';
+
 @Module({
   imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
     MongooseModule.forRootAsync({
-      imports: [ConfigModule],
+      imports: [],
       useFactory: (configService: ConfigService) => {
         const mongoUri = configService.get<string>('MONGODB_URL');
         const logger = new Logger('DatabaseModule');
