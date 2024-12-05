@@ -1,11 +1,12 @@
 import { Logger, Module } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { MongooseModule } from '@nestjs/mongoose';
-import { ConfigModule } from '../config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ModelDefinition, MongooseModule } from '@nestjs/mongoose';
+
 @Module({
   imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
     MongooseModule.forRootAsync({
-      imports: [ConfigModule],
+      imports: [],
       useFactory: (configService: ConfigService) => {
         const mongoUri = configService.get<string>('MONGODB_URL');
         const logger = new Logger('DatabaseModule');
@@ -23,4 +24,8 @@ import { ConfigModule } from '../config';
     }),
   ],
 })
-export class DatabaseModule {}
+export class DatabaseModule {
+  static forFeature(models: ModelDefinition[]) {
+    return MongooseModule.forFeature(models);
+  }
+}
