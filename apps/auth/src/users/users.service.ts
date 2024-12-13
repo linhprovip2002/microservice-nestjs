@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { createUserDto } from './dto/create-user.dto';
 import { UserRepository } from './repositories/user.repository';
 import * as bcrypt from 'bcrypt';
@@ -7,6 +11,12 @@ import { GetUserDto } from './dto/get-user.dto';
 export class UsersService {
   constructor(private readonly userRepository: UserRepository) {}
   async create(createUserDto: createUserDto) {
+    const existUser = await this.userRepository.findOne({
+      email: createUserDto.email,
+    });
+    if (existUser) {
+      throw new BadRequestException('User already exist');
+    }
     return this.userRepository.create({
       ...createUserDto,
       password: await bcrypt.hash(createUserDto.password, 10),
