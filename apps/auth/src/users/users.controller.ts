@@ -1,8 +1,7 @@
 import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { createUserDto } from './dto/create-user.dto';
 import { UsersService } from './users.service';
-import { CurrentUser } from '../decorators/user-current.decorator';
-import { UserDocument } from './models/user.schema';
+import { CurrentUser, UserDocument } from '@app/common';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 
 @Controller('users')
@@ -16,7 +15,6 @@ export class UsersController {
   @Get('/me')
   @UseGuards(JwtAuthGuard)
   async getUser(@CurrentUser() user: UserDocument) {
-    console.log('vao day');
     return user;
   }
 }
