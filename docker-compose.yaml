@@ -9,10 +9,8 @@ services:
       - '3000:3000'
     volumes:
       - .:/usr/src/app   # Ánh xạ thư mục host
-      - /usr/src/app/node_modules  # Tránh ghi đè node_modules
     env_file:
       - ./apps/reservations/.env
-    restart: always  # Tự restart nếu container lỗi
 
   auth:
     build:
@@ -24,7 +22,19 @@ services:
       - '3001:3001'
     volumes:
       - .:/usr/src/app
-      - /usr/src/app/node_modules
     env_file:
       - ./apps/auth/.env
-    restart: always
+
+  payments:
+    build:
+      context: .
+      dockerfile: ./apps/payments/Dockerfile
+      target: development
+    command: pnpm run start:dev payments
+    ports:
+      - '3003:3003'
+    volumes:
+      - .:/usr/src/app
+    env_file:
+      - ./apps/payments/.env
+     
